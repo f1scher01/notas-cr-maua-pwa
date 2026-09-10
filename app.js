@@ -204,10 +204,12 @@ const MONITORIAS = [
     nome: 'Cálculo Diferencial e Integral II',
     ch: 80,
     responsavel: 'Monitor Enzo',
+    teamsLink: 'https://teams.microsoft.com/l/team/19%3Abpt30Dk6V8pcKeJG0bRqa-9NhumgIdEcw4Fzi8CrnjY1%40thread.tacv2/conversations?groupId=ca42acdc-9c4a-40d8-8a3f-41de51bda94c&tenantId=c49e1939-4b53-4738-bb64-41fb2990e41c',
     obs: 'Atendimentos presenciais com resolução de listas e dúvidas teóricas. Em vésperas de atividade ou prova, há monitoria especial de revisão online via Microsoft Teams.',
     horarios: [
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U23' },
-      { dia: 'qua', diaNome: 'Quarta-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U29' }
+      { dia: 'qua', diaNome: 'Quarta-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U29' },
+      { dia: 'rev', diaNome: 'Vésperas de Provas', horario: 'Revisão Online', tipo: 'online', local: 'Microsoft Teams', link: 'https://teams.microsoft.com/l/team/19%3Abpt30Dk6V8pcKeJG0bRqa-9NhumgIdEcw4Fzi8CrnjY1%40thread.tacv2/conversations?groupId=ca42acdc-9c4a-40d8-8a3f-41de51bda94c&tenantId=c49e1939-4b53-4738-bb64-41fb2990e41c' }
     ]
   },
   {
@@ -229,10 +231,11 @@ const MONITORIAS = [
     nome: 'Mecânica Geral',
     ch: 80,
     responsavel: 'Equipe de Monitores de Mecânica Geral',
+    teamsLink: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_YTU0Y2M0YjQtZWI4Yy00MzNiLTg1ZDAtNDZhNGZlNTAzMDMx%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%2226d04049-6185-49e3-a0ac-68b725485b42%22%7d',
     obs: 'Atendimento híbrido: sessões online no início da semana via Microsoft Teams e plantões presenciais na Sala H336 nas quartas e sextas.',
     horarios: [
-      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)' },
-      { dia: 'ter', diaNome: 'Terça-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)' },
+      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_YTU0Y2M0YjQtZWI4Yy00MzNiLTg1ZDAtNDZhNGZlNTAzMDMx%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%2226d04049-6185-49e3-a0ac-68b725485b42%22%7d' },
+      { dia: 'ter', diaNome: 'Terça-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_NzcyODQyMDctY2FlNi00M2IzLTgzZTctOWI5MmQ1ZjMwZTJh%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%2226d04049-6185-49e3-a0ac-68b725485b42%22%7d' },
       { dia: 'qua', diaNome: 'Quarta-feira', horario: '16h40 às 18h30', tipo: 'presencial', local: 'Sala H336' },
       { dia: 'sex', diaNome: 'Sexta-feira', horario: '09h30 às 11h10', tipo: 'presencial', local: 'Sala H336' },
       { dia: 'sex', diaNome: 'Sexta-feira', horario: '11h20 às 13h00', tipo: 'presencial', local: 'Sala H336' }
@@ -253,10 +256,11 @@ const MONITORIAS = [
     nome: 'Estatística',
     ch: 80,
     responsavel: 'Monitor Pedro Wilian Palumbo Bevilacqua',
+    teamsLink: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G',
     obs: 'Atendimento presencial na Sala J309 e sessão remota às sextas-feiras à noite pelo Microsoft Teams.',
     horarios: [
       { dia: 'qua', diaNome: 'Quarta-feira', horario: '14h00 às 15h00', tipo: 'presencial', local: 'Sala J309 (Bloco J)' },
-      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Online (Teams)' }
+      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G' }
     ]
   },
   {
@@ -372,8 +376,11 @@ function renderMonitorias() {
               <div class="slot-subject">${s.cod} · ${s.materia}</div>
               <div class="slot-person">👤 ${s.resp}</div>
               <div class="slot-footer">
-                <span style="color:var(--dim);font-size:.7rem">${s.tipo==='online'?'💻 Plataforma Teams':'📍 Presencial no Campus'}</span>
-                <button type="button" class="slot-btn" data-copy-slot="${s.cod} - ${s.materia}: ${s.diaNome}, ${s.horario} (${s.local})">📋 Copiar</button>
+                <span style="color:var(--dim);font-size:.7rem">${s.tipo==='online'?'💻 Sessão Remota no Teams':'📍 Presencial no Campus Mauá'}</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  ${s.link ? `<a href="${s.link}" target="_blank" rel="noopener noreferrer" class="btn-teams">🚀 Entrar no Teams ↗</a>` : ''}
+                  <button type="button" class="slot-btn" data-copy-slot="${s.cod} - ${s.materia}: ${s.diaNome}, ${s.horario} (${s.local}) ${s.link ? 'Link: ' + s.link : ''}">📋 Copiar</button>
+                </div>
               </div>
             </div>
           `).join('')}
@@ -381,6 +388,59 @@ function renderMonitorias() {
       `;
       wrap.appendChild(sec);
     });
+
+    // Sessões Especiais / Revisões Online Pré-Provas (ex: Cálculo II)
+    const specialSlots = [];
+    MONITORIAS.forEach(m => {
+      m.horarios.forEach(h => {
+        if (!DIAS_SEMANA.some(d => d.id === h.dia)) {
+          const matchesQuery = !q || 
+            m.nome.toLowerCase().includes(q) || 
+            m.cod.toLowerCase().includes(q) || 
+            m.responsavel.toLowerCase().includes(q) || 
+            h.local.toLowerCase().includes(q) ||
+            h.tipo.toLowerCase().includes(q);
+
+          if (matchesQuery) {
+            specialSlots.push({ ...h, materia: m.nome, cod: m.cod, resp: m.responsavel });
+          }
+        }
+      });
+    });
+
+    if (specialSlots.length > 0 && monFiltroDia === 'todos') {
+      totalSlotsEncontrados += specialSlots.length;
+      const sec = document.createElement('div');
+      sec.className = 'day-section';
+      sec.innerHTML = `
+        <div class="day-header">
+          <div class="day-title">
+            <span>🌟 Sessões Especiais & Revisões Online Pré-Prova</span>
+          </div>
+          <span class="day-badge">${specialSlots.length} atendimento${specialSlots.length>1?'s':''}</span>
+        </div>
+        <div class="day-slots">
+          ${specialSlots.map(s => `
+            <div class="slot-card">
+              <div class="slot-time">
+                <span>⏰ ${s.horario}</span>
+                <span class="slot-room ${s.tipo}">${s.local}</span>
+              </div>
+              <div class="slot-subject">${s.cod} · ${s.materia}</div>
+              <div class="slot-person">👤 ${s.resp}</div>
+              <div class="slot-footer">
+                <span style="color:var(--dim);font-size:.7rem">${s.diaNome}</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  ${s.link ? `<a href="${s.link}" target="_blank" rel="noopener noreferrer" class="btn-teams">🚀 Entrar no Teams ↗</a>` : ''}
+                  <button type="button" class="slot-btn" data-copy-slot="${s.cod} - ${s.materia}: ${s.diaNome}, ${s.horario} (${s.local}) ${s.link ? 'Link: ' + s.link : ''}">📋 Copiar</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      wrap.appendChild(sec);
+    }
 
     if (totalSlotsEncontrados === 0) {
       container.innerHTML = `<div class="note" style="text-align:center;padding:32px">
@@ -417,7 +477,7 @@ function renderMonitorias() {
       card.id = 'mon-card-' + m.cod;
 
       const scheduleText = `${m.cod} - ${m.nome}\n${m.responsavel}\n` + 
-        m.horarios.map(h => `• ${h.diaNome}: ${h.horario} (${h.local})`).join('\n');
+        m.horarios.map(h => `• ${h.diaNome}: ${h.horario} (${h.local})${h.link ? ' - Link Teams: ' + h.link : ''}`).join('\n');
 
       card.innerHTML = `
         <div class="mon-top">
@@ -434,7 +494,10 @@ function renderMonitorias() {
                 <span class="mon-day">${s.diaNome}</span>
                 <span class="mon-time" style="color:var(--muted);margin-left:6px">${s.horario}</span>
               </div>
-              <span class="slot-room ${s.tipo}">${s.local}</span>
+              <div style="display:flex;align-items:center;gap:6px">
+                <span class="slot-room ${s.tipo}">${s.local}</span>
+                ${s.link ? `<a href="${s.link}" target="_blank" rel="noopener noreferrer" class="btn-teams">Entrar ↗</a>` : ''}
+              </div>
             </div>
           `).join('')}
         </div>
@@ -445,6 +508,11 @@ function renderMonitorias() {
           <button type="button" class="btn-copy" data-copy-text="${encodeURIComponent(scheduleText)}">
             📋 Copiar Horários
           </button>
+          ${m.teamsLink ? `
+            <a href="${m.teamsLink}" target="_blank" rel="noopener noreferrer" class="btn-teams-primary">
+              <span>💻</span> Acessar Teams da Matéria ↗
+            </a>
+          ` : ''}
         </div>
       `;
       grid.appendChild(card);
