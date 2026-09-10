@@ -5,7 +5,7 @@ const subst = (o,s) => filled(s) ? Math.max(N(o),N(s)) : N(o);
 const clamp = x => Math.max(0, Math.min(10, x));
 const fmt = x => (Math.round(x*100)/100).toFixed(2).replace('.',',');
 
-// ================= 1º ANO (2025) — currículo fixo do curso =================
+// ================= 1º ANO (2025) =================
 const YEAR1 = [
   {cod:'EFB403', nome:'Algoritmos e Programação',            ch:80},
   {cod:'EFB105', nome:'Cálculo Diferencial e Integral I',    ch:160},
@@ -17,7 +17,7 @@ const YEAR1 = [
   {cod:'EFB110', nome:'Vetores, Curvas e Superfícies',       ch:80}
 ];
 
-// ================= 2º ANO (2026) — critérios detalhados =================
+// ================= 2º ANO (2026) =================
 const DISCIPLINAS = [
   {cod:'EFB108', nome:'Matemática Computacional', ch:80,
     rule:'100% trabalhos. MF = 0,4·T1 + 0,6·T2',
@@ -98,12 +98,12 @@ const DISCIPLINAS = [
 ];
 const TOTAL_CH2 = DISCIPLINAS.reduce((s,d)=>s+d.ch,0); // 880h
 
-// ================= render 2º ano =================
-const grid=document.getElementById('grid');
+// ================= RENDER 2º ANO =================
+const grid = document.getElementById('grid');
 DISCIPLINAS.forEach((d,di)=>{
   const card=document.createElement('div');card.className='card';
   let h=`<div class="top"><span class="code">${d.cod}</span><span class="ch">${d.ch}h</span></div>
-    <h3>${d.nome}</h3><div class="rule ${d.inferido?'inferido':''}">${d.rule}</div>`;
+    <h3>${d.nome}</h3><div class="rule">${d.rule}</div>`;
   d.campos.forEach(linha=>{
     const cls=linha.length===1?'one':(linha.length===3?'three':'');
     h+=`<div class="row ${cls}">`;
@@ -113,11 +113,14 @@ DISCIPLINAS.forEach((d,di)=>{
   });
   h+=`<div class="result"><div class="partials" id="part-${di}"></div>
     <div class="mf"><span class="val" id="mf-${di}">—</span><span class="badge none" id="badge-${di}">sem nota</span></div></div>`;
-  h+=`<button type="button" class="btn-mon-link" data-goto-mon="${d.cod}">📅 Horários de monitoria</button>`;
+  h+=`<div class="card-mon-shortcut" data-goto-mon="${d.cod}">
+        <span>📅 Ver plantão de monitoria</span>
+        <span>→</span>
+      </div>`;
   card.innerHTML=h;grid.appendChild(card);
 });
 
-// ================= render 1º ano =================
+// ================= RENDER 1º ANO =================
 const y1=document.getElementById('y1list');
 let y1h=`<div class="y1row head"><span>Código</span><span>Disciplina</span><span>CH</span><span>Nota final</span></div>`;
 YEAR1.forEach((d,i)=>{
@@ -132,7 +135,7 @@ YEAR1.forEach((d,i)=>{
 });
 y1.innerHTML=y1h;
 
-// ================= cálculo geral =================
+// ================= CÁLCULO GERAL =================
 function coletar(di){const g={};document.querySelectorAll(`input[data-d="${di}"]`).forEach(i=>g[i.dataset.f]=i.value);return g;}
 function temNota(di){return[...document.querySelectorAll(`input[data-d="${di}"]`)].some(i=>filled(i.value));}
 
@@ -158,7 +161,7 @@ function recalc(){
   // ---- 1º ano ----
   let soma1=0, ch1=0;
   YEAR1.forEach((d,i)=>{
-    if(d.conceito) return; // conceito fora do CR
+    if(d.conceito) return;
     const el=document.querySelector(`[data-y1="${i}"]`);
     if(el && filled(el.value)){ soma1+=N(el.value)*d.ch; ch1+=d.ch; }
   });
@@ -173,7 +176,6 @@ function recalc(){
   set('kpiM2', media2!==null?fmt(media2):'—');
   document.getElementById('kpiM2cap').textContent = media2!==null ? `${ch2}h de ${TOTAL_CH2}h lançadas` : 'ponderada por CH lançada';
   set('kpiCRp', crProj!==null?fmt(crProj):'—');
-  set('kpiOK', comNota>0 ? `${okCount}/${comNota}` : '—');
 
   // ---- painel CR ----
   set('crBox1', cr1!==null?fmt(cr1):'—');
@@ -189,46 +191,20 @@ function recalc(){
       `<div class="st"><span>CR projetado = ${fmt(soma1+soma2)} ÷ ${ch1+ch2}h</span><b>${fmt(crProj)}</b></div>`;
   } else steps.innerHTML=`<div class="st"><span>Preencha 1º e/ou 2º ano</span><b>—</b></div>`;
 }
-function set(id,v){document.getElementById(id).textContent=v;}
-function bar(id,v){document.getElementById(id).style.width=(v!==null?clamp(v)*10:0)+'%';}
+function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+function bar(id,v){const el=document.getElementById(id);if(el)el.style.width=(v!==null?clamp(v)*10:0)+'%';}
 
 document.addEventListener('input', recalc);
 document.addEventListener('change', recalc);
 
-// ---- tabs ----
-document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    document.getElementById('panel-'+t.dataset.tab).classList.add('active');
-  });
-});
-
-// ---- ações ----
-function limpar2(){document.querySelectorAll('input[data-d]').forEach(i=>i.value='');recalc();}
-function limpar1(){document.querySelectorAll('[data-y1]').forEach(i=>i.value='');recalc();}
-function exemplo(){
-  const demo={'0':{T1:8,T2:7},'1':{P1:6,P2:7,P3:8,P4:5,T1:9,T2:8,T3:7,T4:10},
-    '2':{P1:6,P2:7,T1:8,T2:9},'4':{P1:7,P2:6,T1:8,T2:7}};
-  limpar2();
-  Object.entries(demo).forEach(([di,v])=>Object.entries(v).forEach(([f,x])=>{
-    const el=document.querySelector(`input[data-d="${di}"][data-f="${f}"]`);if(el)el.value=x;}));
-  recalc();
-}
-// ---- listeners dos botões (sem onclick inline, por segurança) ----
-const ACTIONS={limpar2,limpar1,exemplo};
-document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{const fn=ACTIONS[b.dataset.act];if(fn)fn();}));
-recalc();
-
-// ================= MONITORIAS 2º ANO (2026) =================
+// ================= BASE COMPLETA DE MONITORIAS (CANVAS IMT) =================
 const MONITORIAS = [
   {
     cod: 'EFB109',
     nome: 'Cálculo Diferencial e Integral II',
     ch: 80,
     responsavel: 'Monitor Enzo',
-    obs: 'Monitoria de revisão online em vésperas de prova/atividade via Teams.',
+    obs: 'Atendimentos presenciais com resolução de listas e dúvidas teóricas. Em vésperas de atividade ou prova, há monitoria especial de revisão online via Microsoft Teams.',
     horarios: [
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U23' },
       { dia: 'qua', diaNome: 'Quarta-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U29' }
@@ -239,7 +215,7 @@ const MONITORIAS = [
     nome: 'Física II',
     ch: 160,
     responsavel: 'Monitores Sidney Rafael, Breno Rocha e Guilherme Ienna',
-    obs: 'Sempre na Sala H331. Atendimento de dúvidas teóricas, listas e apoio prático.',
+    obs: 'Plantão centralizado sempre na Sala H331 (Bloco H). Abrange dúvidas de teoria, listas de exercícios e preparação para as práticas de laboratório.',
     horarios: [
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '09h30 às 13h00', tipo: 'presencial', local: 'Sala H331 (Sidney)' },
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '15h00 às 18h00', tipo: 'presencial', local: 'Sala H331 (Breno)' },
@@ -252,11 +228,11 @@ const MONITORIAS = [
     cod: 'EFB204',
     nome: 'Mecânica Geral',
     ch: 80,
-    responsavel: 'Equipe de Monitores',
-    obs: 'Sessões online via Microsoft Teams e presenciais no bloco H.',
+    responsavel: 'Equipe de Monitores de Mecânica Geral',
+    obs: 'Atendimento híbrido: sessões online no início da semana via Microsoft Teams e plantões presenciais na Sala H336 nas quartas e sextas.',
     horarios: [
-      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Teams' },
-      { dia: 'ter', diaNome: 'Terça-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Teams' },
+      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)' },
+      { dia: 'ter', diaNome: 'Terça-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)' },
       { dia: 'qua', diaNome: 'Quarta-feira', horario: '16h40 às 18h30', tipo: 'presencial', local: 'Sala H336' },
       { dia: 'sex', diaNome: 'Sexta-feira', horario: '09h30 às 11h10', tipo: 'presencial', local: 'Sala H336' },
       { dia: 'sex', diaNome: 'Sexta-feira', horario: '11h20 às 13h00', tipo: 'presencial', local: 'Sala H336' }
@@ -266,10 +242,10 @@ const MONITORIAS = [
     cod: 'ETM101',
     nome: 'Resistência dos Materiais',
     ch: 160,
-    responsavel: 'Monitor Rafael',
-    obs: 'Dúvidas pontuais com o Prof. Caio Santos: caio.santos@maua.br',
+    responsavel: 'Monitor Rafael (Contato docente: caio.santos@maua.br)',
+    obs: 'Atendimentos presenciais de 3 horas contínuas todas as quintas na Sala R.01 para esclarecimento de diagramas de esforço, tensões e deformações.',
     horarios: [
-      { dia: 'qui', diaNome: 'Quinta-feira', horario: '09h00 às 12h00', tipo: 'presencial', local: 'Sala R.01' }
+      { dia: 'qui', diaNome: 'Quinta-feira', horario: '09h00 às 12h00', tipo: 'presencial', local: 'Sala R.01 (Bloco R)' }
     ]
   },
   {
@@ -277,29 +253,29 @@ const MONITORIAS = [
     nome: 'Estatística',
     ch: 80,
     responsavel: 'Monitor Pedro Wilian Palumbo Bevilacqua',
-    obs: 'Atendimento presencial na sala J309 e online via Teams.',
+    obs: 'Atendimento presencial na Sala J309 e sessão remota às sextas-feiras à noite pelo Microsoft Teams.',
     horarios: [
-      { dia: 'qua', diaNome: 'Quarta-feira', horario: '14h00 às 15h00', tipo: 'presencial', local: 'Sala J309' },
-      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Teams' }
+      { dia: 'qua', diaNome: 'Quarta-feira', horario: '14h00 às 15h00', tipo: 'presencial', local: 'Sala J309 (Bloco J)' },
+      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Online (Teams)' }
     ]
   },
   {
     cod: 'EMC213',
     nome: 'Materiais de Construção Mecânica I',
     ch: 80,
-    responsavel: 'Monitoria de Materiais',
-    obs: 'Plantão presencial de monitoria na sala U19.',
+    responsavel: 'Monitoria de Materiais Metálicos e Ensaios',
+    obs: 'Apoio aos estudos de diagramas de fase, tratamentos térmicos, ensaios mecânicos e ao projeto integrador extensionista (T3) na Sala U19.',
     horarios: [
-      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h30 às 14h30', tipo: 'presencial', local: 'Sala U19' },
-      { dia: 'qua', diaNome: 'Quarta-feira', horario: '18h30 às 19h30', tipo: 'presencial', local: 'Sala U19' }
+      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h30 às 14h30', tipo: 'presencial', local: 'Sala U19 (Bloco U)' },
+      { dia: 'qua', diaNome: 'Quarta-feira', horario: '18h30 às 19h30', tipo: 'presencial', local: 'Sala U19 (Bloco U)' }
     ]
   },
   {
     cod: 'ETM302',
     nome: 'Introdução a Projeto e Manufatura',
     ch: 160,
-    responsavel: 'Monitora Maria Luiza (24.00103-0@maua.br)',
-    obs: 'Atendimento presencial nas salas do bloco C e Q.',
+    responsavel: 'Monitora Maria Luiza Rito (24.00103-0@maua.br)',
+    obs: 'Ampla disponibilidade semanal distribuída entre as salas C4, C5 e Q6 para acompanhamento de modelagem CAD, usinagem e projeto de redutor.',
     horarios: [
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 14h20', tipo: 'presencial', local: 'Sala C4' },
       { dia: 'ter', diaNome: 'Terça-feira', horario: '13h30 às 15h00', tipo: 'presencial', local: 'Sala C5' },
@@ -313,101 +289,440 @@ const MONITORIAS = [
     nome: 'Matemática Computacional',
     ch: 80,
     responsavel: 'Profª Drª Lilian Victorino',
-    obs: 'Plantão de atendimento docente semanal presencial e online.',
+    obs: 'Plantão docente de esclarecimento e orientação para os trabalhos computacionais (T1 e T2) e métodos numéricos.',
     horarios: [
-      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'presencial', local: 'Bloco G02 · Sala 12' }
+      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'presencial', local: 'Bloco G02 · Sala 12 / Online' }
     ]
   }
 ];
 
-const gridMon = document.getElementById('gridMonitorias');
-function renderMonitorias(filtroDia = 'todos') {
-  if (!gridMon) return;
-  gridMon.innerHTML = '';
-  
-  MONITORIAS.forEach(m => {
-    const slots = filtroDia === 'todos' 
-      ? m.horarios 
-      : m.horarios.filter(h => h.dia === filtroDia);
-    
-    if (slots.length === 0) return;
+const DIAS_SEMANA = [
+  { id: 'seg', nome: 'Segunda-feira', idx: 1 },
+  { id: 'ter', nome: 'Terça-feira', idx: 2 },
+  { id: 'qua', nome: 'Quarta-feira', idx: 3 },
+  { id: 'qui', nome: 'Quinta-feira', idx: 4 },
+  { id: 'sex', nome: 'Sexta-feira', idx: 5 }
+];
 
-    const card = document.createElement('div');
-    card.className = 'mon-card';
-    card.id = 'mon-card-' + m.cod;
-    
-    let slotsHtml = '<div class="mon-slots">';
-    slots.forEach(s => {
-      const tagClass = s.tipo === 'online' ? 'online' : 'presencial';
-      slotsHtml += `
-        <div class="mon-slot">
-          <div>
-            <span class="mon-day">${s.diaNome}</span>
-            <span class="mon-time">${s.horario}</span>
+let monFiltroDia = 'todos';
+let monViewMode = 'timeline'; // 'timeline' ou 'cards'
+let monSearchQuery = '';
+
+// ================= RENDERIZADOR DE MONITORIAS =================
+function renderMonitorias() {
+  const container = document.getElementById('monContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const q = monSearchQuery.trim().toLowerCase();
+
+  if (monViewMode === 'timeline') {
+    // ---- VISÃO AGENDA SEMANAL ----
+    const wrap = document.createElement('div');
+    wrap.className = 'timeline-wrap';
+
+    const diasParaExibir = monFiltroDia === 'todos' 
+      ? DIAS_SEMANA 
+      : DIAS_SEMANA.filter(d => d.id === monFiltroDia);
+
+    const hojeIdx = new Date().getDay(); // 0 dom, 1 seg...
+    let totalSlotsEncontrados = 0;
+
+    diasParaExibir.forEach(d => {
+      // busca todos os slots deste dia
+      const slotsDoDia = [];
+      MONITORIAS.forEach(m => {
+        m.horarios.forEach(h => {
+          if (h.dia === d.id) {
+            const matchesQuery = !q || 
+              m.nome.toLowerCase().includes(q) || 
+              m.cod.toLowerCase().includes(q) || 
+              m.responsavel.toLowerCase().includes(q) || 
+              h.local.toLowerCase().includes(q) ||
+              h.tipo.toLowerCase().includes(q);
+
+            if (matchesQuery) {
+              slotsDoDia.push({ ...h, materia: m.nome, cod: m.cod, resp: m.responsavel });
+            }
+          }
+        });
+      });
+
+      if (slotsDoDia.length === 0) return;
+      totalSlotsEncontrados += slotsDoDia.length;
+
+      const isToday = (hojeIdx === d.idx);
+      const sec = document.createElement('div');
+      sec.className = 'day-section';
+      sec.innerHTML = `
+        <div class="day-header">
+          <div class="day-title">
+            <span>📅 ${d.nome}</span>
+            ${isToday ? '<span class="day-badge today">● HOJE</span>' : ''}
           </div>
-          <span class="mon-loc ${tagClass}">${s.local}</span>
-        </div>`;
+          <span class="day-badge">${slotsDoDia.length} atendimento${slotsDoDia.length>1?'s':''}</span>
+        </div>
+        <div class="day-slots">
+          ${slotsDoDia.map(s => `
+            <div class="slot-card">
+              <div class="slot-time">
+                <span>⏰ ${s.horario}</span>
+                <span class="slot-room ${s.tipo}">${s.local}</span>
+              </div>
+              <div class="slot-subject">${s.cod} · ${s.materia}</div>
+              <div class="slot-person">👤 ${s.resp}</div>
+              <div class="slot-footer">
+                <span style="color:var(--dim);font-size:.7rem">${s.tipo==='online'?'💻 Plataforma Teams':'📍 Presencial no Campus'}</span>
+                <button type="button" class="slot-btn" data-copy-slot="${s.cod} - ${s.materia}: ${s.diaNome}, ${s.horario} (${s.local})">📋 Copiar</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      wrap.appendChild(sec);
     });
-    slotsHtml += '</div>';
 
-    card.innerHTML = `
-      <div class="mon-top">
-        <span class="code">${m.cod}</span>
-        <span class="ch">${m.ch}h</span>
-      </div>
-      <h3>${m.nome}</h3>
-      <div class="mon-resp"><b>Responsável:</b> ${m.responsavel}</div>
-      ${slotsHtml}
-      ${m.obs ? `<div class="mon-obs">${m.obs}</div>` : ''}
-    `;
-    gridMon.appendChild(card);
-  });
+    if (totalSlotsEncontrados === 0) {
+      container.innerHTML = `<div class="note" style="text-align:center;padding:32px">
+        Nenhum plantão encontrado para a busca "<b>${monSearchQuery}</b>".
+      </div>`;
+    } else {
+      container.appendChild(wrap);
+    }
+
+  } else {
+    // ---- VISÃO POR MATÉRIA (CARDS DETALHADOS) ----
+    const grid = document.createElement('div');
+    grid.className = 'mon-grid';
+
+    let count = 0;
+    MONITORIAS.forEach(m => {
+      // filtra slots
+      const slots = m.horarios.filter(h => {
+        const matchesDay = (monFiltroDia === 'todos' || h.dia === monFiltroDia);
+        const matchesQuery = !q || 
+          m.nome.toLowerCase().includes(q) || 
+          m.cod.toLowerCase().includes(q) || 
+          m.responsavel.toLowerCase().includes(q) || 
+          h.local.toLowerCase().includes(q) ||
+          h.horario.toLowerCase().includes(q);
+        return matchesDay && matchesQuery;
+      });
+
+      if (slots.length === 0 && (q || monFiltroDia !== 'todos')) return;
+      count++;
+
+      const card = document.createElement('div');
+      card.className = 'mon-card';
+      card.id = 'mon-card-' + m.cod;
+
+      const scheduleText = `${m.cod} - ${m.nome}\n${m.responsavel}\n` + 
+        m.horarios.map(h => `• ${h.diaNome}: ${h.horario} (${h.local})`).join('\n');
+
+      card.innerHTML = `
+        <div class="mon-top">
+          <span class="code">${m.cod}</span>
+          <span class="ch">${m.ch}h</span>
+        </div>
+        <h3>${m.nome}</h3>
+        <div class="mon-resp"><b>Responsável:</b> ${m.responsavel}</div>
+        
+        <div class="mon-slots-list">
+          ${(slots.length > 0 ? slots : m.horarios).map(s => `
+            <div class="mon-slot-row">
+              <div>
+                <span class="mon-day">${s.diaNome}</span>
+                <span class="mon-time" style="color:var(--muted);margin-left:6px">${s.horario}</span>
+              </div>
+              <span class="slot-room ${s.tipo}">${s.local}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="mon-obs">${m.obs}</div>
+
+        <div class="mon-actions">
+          <button type="button" class="btn-copy" data-copy-text="${encodeURIComponent(scheduleText)}">
+            📋 Copiar Horários
+          </button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    if (count === 0) {
+      container.innerHTML = `<div class="note" style="text-align:center;padding:32px">
+        Nenhuma matéria encontrada para a busca "<b>${monSearchQuery}</b>".
+      </div>`;
+    } else {
+      container.appendChild(grid);
+    }
+  }
 }
-renderMonitorias();
 
-// ---- filtros de monitoria ----
-document.querySelectorAll('#monFilters .chip').forEach(btn => {
+// ================= ATUALIZADOR DO HERO LIVE (HOJE NA MAUÁ) =================
+function updateLiveHero() {
+  const hojeIdx = new Date().getDay(); // 0 dom, 1 seg, 2 ter, 3 qua, 4 qui, 5 sex, 6 sab
+  const diaMap = { 1:'seg', 2:'ter', 3:'qua', 4:'qui', 5:'sex' };
+  const nomeMap = { 0:'Domingo', 1:'Segunda-feira', 2:'Terça-feira', 3:'Quarta-feira', 4:'Quinta-feira', 5:'Sexta-feira', 6:'Sábado' };
+  
+  const hojeId = diaMap[hojeIdx];
+  const elDay = document.getElementById('todayDayName');
+  const elTitle = document.getElementById('todayHeroTitle');
+  const elSub = document.getElementById('todayHeroSub');
+  const elCount = document.getElementById('statTodayCount');
+
+  if (elDay) elDay.textContent = `Plantão de ${nomeMap[hojeIdx] || 'Hoje'}`;
+
+  if (hojeId) {
+    let slotsHoje = 0;
+    const materiasHoje = [];
+    MONITORIAS.forEach(m => {
+      m.horarios.forEach(h => {
+        if (h.dia === hojeId) {
+          slotsHoje++;
+          if (!materiasHoje.includes(m.cod)) materiasHoje.push(m.cod);
+        }
+      });
+    });
+
+    if (elCount) elCount.textContent = slotsHoje;
+    if (elTitle) elTitle.textContent = `${slotsHoje} plantões ativos hoje na Mauá`;
+    if (elSub) elSub.textContent = `Atendimentos em: ${materiasHoje.join(', ')}. Clique na visão de agenda para ver salas e horários.`;
+  } else {
+    if (elCount) elCount.textContent = '0';
+    if (elTitle) elTitle.textContent = 'Fim de semana · Próximas monitorias na Segunda-feira';
+    if (elSub) elSub.textContent = 'Segunda começam as monitorias às 09h00 (Cálculo II na Sala U23).';
+  }
+}
+
+// ================= CONTROLES E EVENTOS DE MONITORIA =================
+// Filtro por dia
+document.querySelectorAll('#monDayChips .chip').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('#monFilters .chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('#monDayChips .chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
-    renderMonitorias(btn.dataset.dia);
+    monFiltroDia = btn.dataset.dia;
+    renderMonitorias();
   });
 });
 
-// ---- navegação direta do card de notas para a monitoria ----
+// Alternador de visão (Timeline vs Cards)
+const btnTimeline = document.getElementById('btnViewTimeline');
+const btnCards = document.getElementById('btnViewCards');
+
+if (btnTimeline && btnCards) {
+  btnTimeline.addEventListener('click', () => {
+    btnTimeline.classList.add('active');
+    btnCards.classList.remove('active');
+    monViewMode = 'timeline';
+    renderMonitorias();
+  });
+  btnCards.addEventListener('click', () => {
+    btnCards.classList.add('active');
+    btnTimeline.classList.remove('active');
+    monViewMode = 'cards';
+    renderMonitorias();
+  });
+}
+
+// Busca instantânea
+const searchInput = document.getElementById('monSearch');
+if (searchInput) {
+  searchInput.addEventListener('input', e => {
+    monSearchQuery = e.target.value;
+    renderMonitorias();
+  });
+}
+
+// Copiar texto para área de transferência
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-copy-text]');
+  if (btn) {
+    const text = decodeURIComponent(btn.dataset.copyText);
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('📋 Horários copiados para a área de transferência!');
+    }).catch(() => {
+      showToast('Erro ao copiar.');
+    });
+    return;
+  }
+  const btnSlot = e.target.closest('[data-copy-slot]');
+  if (btnSlot) {
+    navigator.clipboard.writeText(btnSlot.dataset.copySlot).then(() => {
+      showToast('📋 Horário copiado com sucesso!');
+    });
+  }
+});
+
+// ================= SISTEMA DE NAVEGAÇÃO DE ABAS & MOBILE DOCK =================
+function switchTab(tabId) {
+  // desativa abas desktop e itens do dock
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.dock-item').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+
+  // ativa aba desktop
+  const tabEl = document.querySelector(`.tab[data-tab="${tabId}"]`);
+  if (tabEl) tabEl.classList.add('active');
+
+  // ativa item dock
+  const dockEl = document.querySelector(`.dock-item[data-tab="${tabId}"]`);
+  if (dockEl) dockEl.classList.add('active');
+
+  // ativa painel
+  const panelEl = document.getElementById('panel-' + tabId);
+  if (panelEl) panelEl.classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Click nas abas desktop
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => switchTab(t.dataset.tab));
+});
+
+// Click no mobile dock
+document.querySelectorAll('.dock-item').forEach(d => {
+  d.addEventListener('click', () => switchTab(d.dataset.tab));
+});
+
+// Atalho do card de notas para a monitoria
 document.addEventListener('click', e => {
   const btn = e.target.closest('[data-goto-mon]');
   if (!btn) return;
   const cod = btn.dataset.gotoMon;
-  
-  // ativa aba de monitorias
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
-  const monTab = document.querySelector('.tab[data-tab="monitorias"]');
-  const monPanel = document.getElementById('panel-monitorias');
-  if (monTab && monPanel) {
-    monTab.classList.add('active');
-    monPanel.classList.add('active');
-  }
-  
-  // reseta filtro para todos
-  document.querySelectorAll('#monFilters .chip').forEach(c => c.classList.remove('active'));
-  const allChip = document.querySelector('#monFilters .chip[data-dia="todos"]');
-  if (allChip) allChip.classList.add('active');
-  renderMonitorias('todos');
 
-  // destaca e rola suavemente até o card
+  // muda para a visão de matérias para localizar o card
+  monViewMode = 'cards';
+  if (btnCards && btnTimeline) {
+    btnCards.classList.add('active');
+    btnTimeline.classList.remove('active');
+  }
+  monFiltroDia = 'todos';
+  document.querySelectorAll('#monDayChips .chip').forEach(c => c.classList.remove('active'));
+  const allChip = document.querySelector('#monDayChips .chip[data-dia="todos"]');
+  if (allChip) allChip.classList.add('active');
+  monSearchQuery = '';
+  if (searchInput) searchInput.value = '';
+
+  switchTab('monitorias');
+  renderMonitorias();
+
   setTimeout(() => {
-    const targetCard = document.getElementById('mon-card-' + cod);
-    if (targetCard) {
-      targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      targetCard.classList.add('highlight');
-      setTimeout(() => targetCard.classList.remove('highlight'), 1800);
+    const target = document.getElementById('mon-card-' + cod);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.add('highlight');
+      setTimeout(() => target.classList.remove('highlight'), 2000);
     }
-  }, 100);
+  }, 120);
 });
 
-// ---- Service Worker (offline / instalável na tela inicial) ----
+// ================= TOAST FEEDBACK =================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ================= PWA INSTALLATION & SYNC =================
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btnPrompt = document.getElementById('installBrowserPrompt');
+  if (btnPrompt) btnPrompt.style.display = 'block';
+});
+
+const installModal = document.getElementById('installModal');
+const btnInstall = document.getElementById('btnInstall');
+const closeInstall = document.getElementById('closeInstallModal');
+const btnDoInstall = document.getElementById('btnDoInstall');
+
+if (btnInstall && installModal) {
+  btnInstall.addEventListener('click', () => {
+    installModal.classList.add('open');
+  });
+}
+if (closeInstall && installModal) {
+  closeInstall.addEventListener('click', () => {
+    installModal.classList.remove('open');
+  });
+}
+if (installModal) {
+  installModal.addEventListener('click', e => {
+    if (e.target === installModal) installModal.classList.remove('open');
+  });
+}
+if (btnDoInstall) {
+  btnDoInstall.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        showToast('App instalado com sucesso! 🎉');
+      }
+      deferredPrompt = null;
+      installModal.classList.remove('open');
+    }
+  });
+}
+
+// Sincronizar / Limpar Cache
+const btnSync = document.getElementById('btnSync');
+if (btnSync) {
+  btnSync.addEventListener('click', async () => {
+    showToast('🔄 Atualizando e recarregando app...');
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (let r of regs) await r.update();
+    }
+    setTimeout(() => {
+      window.location.reload(true);
+    }, 600);
+  });
+}
+
+// ---- ações dos botões de notas ----
+function limpar2(){document.querySelectorAll('input[data-d]').forEach(i=>i.value='');recalc();showToast('Notas do 2º ano limpas.');}
+function limpar1(){document.querySelectorAll('[data-y1]').forEach(i=>i.value='');recalc();showToast('Notas do 1º ano limpas.');}
+function exemplo(){
+  const demo={'0':{T1:8,T2:7},'1':{P1:6,P2:7,P3:8,P4:5,T1:9,T2:8,T3:7,T4:10},
+    '2':{P1:6,P2:7,T1:8,T2:9},'4':{P1:7,P2:6,T1:8,T2:7}};
+  limpar2();
+  Object.entries(demo).forEach(([di,v])=>Object.entries(v).forEach(([f,x])=>{
+    const el=document.querySelector(`input[data-d="${di}"][data-f="${f}"]`);if(el)el.value=x;}));
+  recalc();
+  showToast('Exemplo de notas carregado!');
+}
+const ACTIONS={limpar2,limpar1,exemplo};
+document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{const fn=ACTIONS[b.dataset.act];if(fn)fn();}));
+
+// Inicialização
+recalc();
+renderMonitorias();
+updateLiveHero();
+
+// Service Worker (Auto-claim e Auto-refresh quando houver nova versão)
 if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
+
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.update().catch(() => {});
+    }).catch(() => {});
+  });
 }
