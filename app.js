@@ -363,11 +363,10 @@ const MONITORIAS = [
     ch: 80,
     responsavel: 'Monitor Enzo',
     teamsLink: 'https://teams.microsoft.com/l/team/19%3Abpt30Dk6V8pcKeJG0bRqa-9NhumgIdEcw4Fzi8CrnjY1%40thread.tacv2/conversations?groupId=ca42acdc-9c4a-40d8-8a3f-41de51bda94c&tenantId=c49e1939-4b53-4738-bb64-41fb2990e41c',
-    obs: 'Atendimentos presenciais com resolução de listas e dúvidas teóricas. Em vésperas de atividade ou prova, há monitoria especial de revisão online via Microsoft Teams.',
+    obs: 'Atendimentos presenciais com resolução de listas e dúvidas teóricas nas salas U23 e U29. Canal de monitoria no Microsoft Teams disponível para suporte aos alunos.',
     horarios: [
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U23' },
-      { dia: 'qua', diaNome: 'Quarta-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U29' },
-      { dia: 'rev', diaNome: 'Vésperas de Provas', horario: 'Revisão Online', tipo: 'online', local: 'Microsoft Teams', link: 'https://teams.microsoft.com/l/team/19%3Abpt30Dk6V8pcKeJG0bRqa-9NhumgIdEcw4Fzi8CrnjY1%40thread.tacv2/conversations?groupId=ca42acdc-9c4a-40d8-8a3f-41de51bda94c&tenantId=c49e1939-4b53-4738-bb64-41fb2990e41c' }
+      { dia: 'qua', diaNome: 'Quarta-feira', horario: '09h00 às 11h00', tipo: 'presencial', local: 'Sala U29' }
     ]
   },
   {
@@ -414,9 +413,10 @@ const MONITORIAS = [
     nome: 'Matemática Computacional',
     ch: 80,
     responsavel: 'Profª Drª Lilian Victorino',
-    obs: 'Plantão docente de esclarecimento e orientação para os trabalhos computacionais (T1 e T2) e métodos numéricos.',
+    teamsLink: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_MmM2OGVhODgtNjU1Ni00NjJjLWJjMGQtYWUyMWQ0MzVjMjM1%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%22d62fc926-6011-40bb-a9c1-83b1c000b27d%22%7d',
+    obs: 'Plantão docente de esclarecimento e orientação para os trabalhos computacionais (T1 e T2) e métodos numéricos. Atendimento híbrido presencial no Bloco G02 e online via Microsoft Teams.',
     horarios: [
-      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'presencial', local: 'Bloco G02 · Sala 12 / Online' }
+      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'online', local: 'Bloco G02 · Sala 12 / Teams', link: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_MmM2OGVhODgtNjU1Ni00NjJjLWJjMGQtYWUyMWQ0MzVjMjM1%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%22d62fc926-6011-40bb-a9c1-83b1c000b27d%22%7d' }
     ]
   },
   {
@@ -549,6 +549,39 @@ function matchesSearch(m, slot = null) {
   return tokens.every(token => corpus.includes(token));
 }
 
+// ================= TEMPO E FUSO HORÁRIO OFICIAL (SÃO PAULO / BRASÍLIA UTC-3) =================
+// Garante precisão absoluta do dia e horário de São Paulo independente do fuso do dispositivo do aluno
+function getSaoPauloNow() {
+  const now = new Date();
+  const spDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  const dayIdx = spDate.getDay(); // 0 dom, 1 seg, 2 ter, 3 qua, 4 qui, 5 sex, 6 sab
+  const diaMap = { 1: 'seg', 2: 'ter', 3: 'qua', 4: 'qui', 5: 'sex' };
+  const diaNomeMap = { 
+    0: 'Domingo', 
+    1: 'Segunda-feira', 
+    2: 'Terça-feira', 
+    3: 'Quarta-feira', 
+    4: 'Quinta-feira', 
+    5: 'Sexta-feira', 
+    6: 'Sábado' 
+  };
+  const hours = spDate.getHours();
+  const minutes = spDate.getMinutes();
+  const timeFormatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  const dateFormatted = spDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Sao_Paulo' });
+
+  return {
+    spDate,
+    dayIdx,
+    diaId: diaMap[dayIdx] || null,
+    diaNome: diaNomeMap[dayIdx] || 'Hoje',
+    timeFormatted,
+    dateFormatted,
+    hours,
+    minutes
+  };
+}
+
 // ================= RENDERIZADOR DE MONITORIAS =================
 function renderMonitorias() {
   const container = document.getElementById('monContainer');
@@ -564,7 +597,8 @@ function renderMonitorias() {
       ? DIAS_SEMANA 
       : DIAS_SEMANA.filter(d => d.id === monFiltroDia);
 
-    const hojeIdx = new Date().getDay(); // 0 dom, 1 seg...
+    const spNow = getSaoPauloNow();
+    const hojeIdx = spNow.dayIdx;
     let totalSlotsEncontrados = 0;
 
     diasParaExibir.forEach(d => {
@@ -615,52 +649,6 @@ function renderMonitorias() {
       `;
       wrap.appendChild(sec);
     });
-
-    // Sessões Especiais / Revisões Online Pré-Provas (ex: Cálculo II)
-    const specialSlots = [];
-    MONITORIAS.forEach(m => {
-      m.horarios.forEach(h => {
-        if (!DIAS_SEMANA.some(d => d.id === h.dia)) {
-          if (matchesSearch(m, h)) {
-            specialSlots.push({ ...h, materia: m.nome, cod: m.cod, resp: m.responsavel });
-          }
-        }
-      });
-    });
-
-    if (specialSlots.length > 0 && monFiltroDia === 'todos') {
-      totalSlotsEncontrados += specialSlots.length;
-      const sec = document.createElement('div');
-      sec.className = 'day-section';
-      sec.innerHTML = `
-        <div class="day-header">
-          <div class="day-title">
-            <span>🌟 Sessões Especiais & Revisões Online Pré-Prova</span>
-          </div>
-          <span class="day-badge">${specialSlots.length} atendimento${specialSlots.length>1?'s':''}</span>
-        </div>
-        <div class="day-slots">
-          ${specialSlots.map(s => `
-            <div class="slot-card">
-              <div class="slot-time">
-                <span>⏰ ${s.horario}</span>
-                <span class="slot-room ${s.tipo}">${s.local}</span>
-              </div>
-              <div class="slot-subject">${s.cod} · ${s.materia}</div>
-              <div class="slot-person">👤 ${s.resp}</div>
-              <div class="slot-footer">
-                <span style="color:var(--dim);font-size:.7rem">${s.diaNome}</span>
-                <div style="display:flex;align-items:center;gap:6px">
-                  ${s.link ? `<a href="${s.link}" target="_blank" rel="noopener noreferrer" class="btn-teams">🚀 Entrar no Teams ↗</a>` : ''}
-                  <button type="button" class="slot-btn" data-copy-slot="${s.cod} - ${s.materia}: ${s.diaNome}, ${s.horario} (${s.local}) ${s.link ? 'Link: ' + s.link : ''}">📋 Copiar</button>
-                </div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `;
-      wrap.appendChild(sec);
-    }
 
     if (totalSlotsEncontrados === 0) {
       container.innerHTML = `<div class="note" style="text-align:center;padding:32px">
@@ -749,24 +737,22 @@ function renderMonitorias() {
 
 // ================= ATUALIZADOR DO HERO LIVE (HOJE NA MAUÁ) =================
 function updateLiveHero() {
-  const hojeIdx = new Date().getDay(); // 0 dom, 1 seg, 2 ter, 3 qua, 4 qui, 5 sex, 6 sab
-  const diaMap = { 1:'seg', 2:'ter', 3:'qua', 4:'qui', 5:'sex' };
-  const nomeMap = { 0:'Domingo', 1:'Segunda-feira', 2:'Terça-feira', 3:'Quarta-feira', 4:'Quinta-feira', 5:'Sexta-feira', 6:'Sábado' };
-  
-  const hojeId = diaMap[hojeIdx];
+  const sp = getSaoPauloNow();
   const elDay = document.getElementById('todayDayName');
+  const elClock = document.getElementById('todayLiveClock');
   const elTitle = document.getElementById('todayHeroTitle');
   const elSub = document.getElementById('todayHeroSub');
   const elCount = document.getElementById('statTodayCount');
 
-  if (elDay) elDay.textContent = `Plantão de ${nomeMap[hojeIdx] || 'Hoje'}`;
+  if (elDay) elDay.textContent = `Plantão de ${sp.diaNome}`;
+  if (elClock) elClock.textContent = `• ${sp.timeFormatted} (Brasília)`;
 
-  if (hojeId) {
+  if (sp.diaId) {
     let slotsHoje = 0;
     const materiasHoje = [];
     MONITORIAS.forEach(m => {
       m.horarios.forEach(h => {
-        if (h.dia === hojeId) {
+        if (h.dia === sp.diaId) {
           slotsHoje++;
           if (!materiasHoje.includes(m.cod)) materiasHoje.push(m.cod);
         }
@@ -774,8 +760,8 @@ function updateLiveHero() {
     });
 
     if (elCount) elCount.textContent = slotsHoje;
-    if (elTitle) elTitle.textContent = `${slotsHoje} plantões ativos hoje na Mauá`;
-    if (elSub) elSub.textContent = `Atendimentos em: ${materiasHoje.join(', ')}. Clique na visão de agenda para ver salas e horários.`;
+    if (elTitle) elTitle.textContent = `${slotsHoje} plantão${slotsHoje > 1 ? 'ões' : ''} ativo${slotsHoje > 1 ? 's' : ''} hoje na Mauá`;
+    if (elSub) elSub.textContent = `Atendimentos em: ${materiasHoje.join(', ')}. Horário oficial de Brasília (${sp.timeFormatted}).`;
   } else {
     if (elCount) elCount.textContent = '0';
     if (elTitle) elTitle.textContent = 'Fim de semana · Próximas monitorias na Segunda-feira';
@@ -1019,6 +1005,11 @@ document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()
 recalc();
 renderMonitorias();
 updateLiveHero();
+
+// Atualiza o relógio oficial e status de monitoria a cada 30 segundos
+if (typeof setInterval === 'function') {
+  setInterval(updateLiveHero, 30000);
+}
 
 // Service Worker (Auto-claim e Auto-refresh quando houver nova versão)
 if('serviceWorker' in navigator){
