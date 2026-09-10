@@ -18,83 +18,208 @@ const YEAR1 = [
 ];
 
 // ================= 2º ANO (2026) =================
+// Ordem de prioridade oficial do portal Canvas IMT: Cálculo II, Física II, ResMat, MecGeral, MatComp, IPM, MCM, Estatística
 const DISCIPLINAS = [
-  {cod:'EFB108', nome:'Matemática Computacional', ch:80,
-    rule:'100% trabalhos. MF = 0,4·T1 + 0,6·T2',
-    campos:[[{id:'T1',l:'T1 (1º sem)'},{id:'T2',l:'T2 (2º sem)'}]],
-    compute:g=>{const mf=0.4*N(g.T1)+0.6*N(g.T2);return{mf,partials:[['MF',mf]]};}},
-
-  {cod:'EFB109', nome:'Cálculo Diferencial e Integral II', ch:80,
-    rule:'PS1 substitui a menor de P1/P2; PS2 a menor de P3/P4. MP=(2P1+2P2+3P3+3P4)/10 · MT=média(T1..T4) · MF=0,8MP+0,2MT',
-    campos:[
+  {
+    cod: 'EFB109',
+    nome: 'Cálculo Diferencial e Integral II',
+    ch: 80,
+    criterio: {
+      resolucao: 'Critério CEPE 16/2024',
+      mf: 'MF = 0,8·MP + 0,2·MT',
+      mp: '(2·P₁ + 2·P₂ + 3·P₃ + 3·P₄) / 10',
+      mt: 'Média Aritmética (T₁..T₄)',
+      ps: 'PS₁ substitui min(P₁, P₂) · PS₂ substitui min(P₃, P₄)',
+      obs: null
+    },
+    campos: [
       [{id:'P1',l:'P1'},{id:'P2',l:'P2'},{id:'P3',l:'P3'},{id:'P4',l:'P4'}],
       [{id:'PS1',l:'PS1',sub:1},{id:'PS2',l:'PS2',sub:1}],
-      [{id:'T1',l:'T1'},{id:'T2',l:'T2'},{id:'T3',l:'T3'},{id:'T4',l:'T4'}]],
-    compute:g=>{const p1=subst(g.P1,g.PS1),p2=subst(g.P2,g.PS1),p3=subst(g.P3,g.PS2),p4=subst(g.P4,g.PS2);
-      const mp=(2*p1+2*p2+3*p3+3*p4)/10, mt=(N(g.T1)+N(g.T2)+N(g.T3)+N(g.T4))/4, mf=0.8*mp+0.2*mt;
-      return{mf,partials:[['MP',mp],['MT',mt],['MF',mf]]};}},
-
-  {cod:'EFB204', nome:'Mecânica Geral', ch:80,
-    rule:'PS substitui a menor de P1/P2. MP=(2P1+3P2)/5 · MT=média(T1,T2) · MF=0,7MP+0,3MT',
-    campos:[
-      [{id:'P1',l:'P1'},{id:'P2',l:'P2'}],
-      [{id:'PS',l:'PS',sub:1}],
-      [{id:'T1',l:'T1'},{id:'T2',l:'T2'}]],
-    compute:g=>{const p1=subst(g.P1,g.PS),p2=subst(g.P2,g.PS);
-      const mp=(2*p1+3*p2)/5, mt=(N(g.T1)+N(g.T2))/2, mf=0.7*mp+0.3*mt;
-      return{mf,partials:[['MP',mp],['MT',mt],['MF',mf]]};}},
-
-  {cod:'EFB206', nome:'Física II', ch:160,
-    rule:'MP1=0,8Pi1+0,2Te1 · MP2=0,8Pi2+0,2Te2 · MP=0,4MP1+0,6MP2 | MT=lab+projeto · MF=0,6MP+0,4MT. Psub substitui Pi1, Pi2 ou ambas.',
-    campos:[
+      [{id:'T1',l:'T1'},{id:'T2',l:'T2'},{id:'T3',l:'T3'},{id:'T4',l:'T4'}]
+    ],
+    compute: g => {
+      const p1 = subst(g.P1, g.PS1), p2 = subst(g.P2, g.PS1), p3 = subst(g.P3, g.PS2), p4 = subst(g.P4, g.PS2);
+      const mp = (2*p1 + 2*p2 + 3*p3 + 3*p4) / 10;
+      const mt = (N(g.T1) + N(g.T2) + N(g.T3) + N(g.T4)) / 4;
+      const mf = 0.8 * mp + 0.2 * mt;
+      return { mf, partials: [['MP', mp], ['MT', mt], ['MF', mf]] };
+    }
+  },
+  {
+    cod: 'EFB206',
+    nome: 'Física II',
+    ch: 160,
+    criterio: {
+      resolucao: 'Critério CEPE 16/2024',
+      mf: 'MF = 0,6·MP + 0,4·MT',
+      mp: '0,4·MP₁ + 0,6·MP₂ (com MPᵢ = 0,8·Piᵢ + 0,2·Teᵢ)',
+      mt: '0,5·MT₁ + 0,5·MT₂ (Lab 80% + Projeto 20%)',
+      ps: 'Psub substitui Pi₁, Pi₂ ou ambas as provas',
+      obs: null
+    },
+    campos: [
       [{id:'Pi1',l:'Pi1 (prova)'},{id:'Pi2',l:'Pi2 (prova)'}],
       [{id:'Te1',l:'Te1 (sala)'},{id:'Te2',l:'Te2 (sala)'}],
       [{id:'Psub',l:'Psub',sub:1}],
       [{id:'MAt1',l:'Média lab 1º sem'},{id:'Proj1',l:'Projeto 1'}],
-      [{id:'MAt2',l:'Média lab 2º sem'},{id:'Proj2',l:'Projeto 2'}]],
-    compute:g=>{const pi1=subst(g.Pi1,g.Psub),pi2=subst(g.Pi2,g.Psub);
-      const mp1=0.8*pi1+0.2*N(g.Te1),mp2=0.8*pi2+0.2*N(g.Te2),mp=0.4*mp1+0.6*mp2;
-      const mt1=0.8*N(g.MAt1)+0.2*N(g.Proj1),mt2=0.8*N(g.MAt2)+0.2*N(g.Proj2),mt=0.5*mt1+0.5*mt2;
-      const mf=0.6*mp+0.4*mt; return{mf,partials:[['MP',mp],['MT',mt],['MF',mf]]};}},
-
-  {cod:'EFB803', nome:'Estatística', ch:80,
-    rule:'PS (única) substitui a menor de P1/P2. Trabalhos SEM substitutiva. MP=(2P1+3P2)/5 · MT=(3T1+2T2)/5 · MF=0,6MP+0,4MT',
-    campos:[
-      [{id:'P1',l:'P1'},{id:'P2',l:'P2'}],
-      [{id:'PS',l:'PS',sub:1}],
-      [{id:'T1',l:'T1'},{id:'T2',l:'T2'}]],
-    compute:g=>{const p1=subst(g.P1,g.PS),p2=subst(g.P2,g.PS);
-      const mp=(2*p1+3*p2)/5, mt=(3*N(g.T1)+2*N(g.T2))/5, mf=0.6*mp+0.4*mt;
-      return{mf,partials:[['MP',mp],['MT',mt],['MF',mf]]};}},
-
-  {cod:'EMC213', nome:'Materiais de Construção Mecânica I', ch:80,
-    rule:'C4/2015. MP=(2P1+3P2)/5 · MT=média(T1..T5), pesos K todos=1 · MF=0,6MP+0,4MT (kp=3, kt=2). T3 = projeto integrador extensionista.',
-    campos:[
-      [{id:'P1',l:'P1'},{id:'P2',l:'P2'}],
-      [{id:'T1',l:'T1'},{id:'T2',l:'T2'},{id:'T3',l:'T3'}],
-      [{id:'T4',l:'T4'},{id:'T5',l:'T5'}]],
-    compute:g=>{const mp=(2*N(g.P1)+3*N(g.P2))/5, mt=(N(g.T1)+N(g.T2)+N(g.T3)+N(g.T4)+N(g.T5))/5, mf=0.6*mp+0.4*mt;
-      return{mf,partials:[['MP',mp],['MT',mt],['MF',mf]]};}},
-
-  {cod:'ETM101', nome:'Resistência dos Materiais', ch:160,
-    rule:'PS1 substitui menor de P1/P2; PS2 a de P3/P4. MP=(2P1+2P2+3P3+3P4)/10 · MT=0,2T1+0,1T2+0,1T3+0,3T4+0,3T5 · MF=0,6MP+0,4MT',
-    campos:[
+      [{id:'MAt2',l:'Média lab 2º sem'},{id:'Proj2',l:'Projeto 2'}]
+    ],
+    compute: g => {
+      const pi1 = subst(g.Pi1, g.Psub), pi2 = subst(g.Pi2, g.Psub);
+      const mp1 = 0.8 * pi1 + 0.2 * N(g.Te1);
+      const mp2 = 0.8 * pi2 + 0.2 * N(g.Te2);
+      const mp = 0.4 * mp1 + 0.6 * mp2;
+      const mt1 = 0.8 * N(g.MAt1) + 0.2 * N(g.Proj1);
+      const mt2 = 0.8 * N(g.MAt2) + 0.2 * N(g.Proj2);
+      const mt = 0.5 * mt1 + 0.5 * mt2;
+      const mf = 0.6 * mp + 0.4 * mt;
+      return { mf, partials: [['MP', mp], ['MT', mt], ['MF', mf]] };
+    }
+  },
+  {
+    cod: 'ETM101',
+    nome: 'Resistência dos Materiais',
+    ch: 160,
+    criterio: {
+      resolucao: 'Critério CEPE 16/2024',
+      mf: 'MF = 0,6·MP + 0,4·MT',
+      mp: '(2·P₁ + 2·P₂ + 3·P₃ + 3·P₄) / 10',
+      mt: '0,2·T₁ + 0,1·T₂ + 0,1·T₃ + 0,3·T₄ + 0,3·T₅',
+      ps: 'PS₁ substitui min(P₁, P₂) · PS₂ substitui min(P₃, P₄)',
+      obs: null
+    },
+    campos: [
       [{id:'P1',l:'P1'},{id:'P2',l:'P2'},{id:'P3',l:'P3'},{id:'P4',l:'P4'}],
       [{id:'PS1',l:'PS1',sub:1},{id:'PS2',l:'PS2',sub:1}],
       [{id:'T1',l:'T1 (20%)'},{id:'T2',l:'T2 (10%)'},{id:'T3',l:'T3 (10%)'}],
-      [{id:'T4',l:'T4 (30%)'},{id:'T5',l:'T5 (30%)'}]],
-    compute:g=>{const p1=subst(g.P1,g.PS1),p2=subst(g.P2,g.PS1),p3=subst(g.P3,g.PS2),p4=subst(g.P4,g.PS2);
-      const mp=(2*p1+2*p2+3*p3+3*p4)/10, mt=0.2*N(g.T1)+0.1*N(g.T2)+0.1*N(g.T3)+0.3*N(g.T4)+0.3*N(g.T5), mf=0.6*mp+0.4*mt;
-      return{mf,partials:[['MP',mp],['MT',mt],['MF',mf]]};}},
-
-  {cod:'ETM302', nome:'Introdução a Projeto e Manufatura', ch:160,
-    rule:'C4/2015. MP=(2P1+3P2)/5 · MT=(T1+T2+2T3+2T4+T5+T6)/8 (K=1,1,2,2,1,1) · MF=0,4MP+0,6MT (kp=4, kt=6). T4=Projeto Integrador, T6=extensionista.',
-    campos:[
+      [{id:'T4',l:'T4 (30%)'},{id:'T5',l:'T5 (30%)'}]
+    ],
+    compute: g => {
+      const p1 = subst(g.P1, g.PS1), p2 = subst(g.P2, g.PS1), p3 = subst(g.P3, g.PS2), p4 = subst(g.P4, g.PS2);
+      const mp = (2*p1 + 2*p2 + 3*p3 + 3*p4) / 10;
+      const mt = 0.2*N(g.T1) + 0.1*N(g.T2) + 0.1*N(g.T3) + 0.3*N(g.T4) + 0.3*N(g.T5);
+      const mf = 0.6 * mp + 0.4 * mt;
+      return { mf, partials: [['MP', mp], ['MT', mt], ['MF', mf]] };
+    }
+  },
+  {
+    cod: 'EFB204',
+    nome: 'Mecânica Geral',
+    ch: 80,
+    criterio: {
+      resolucao: 'Critério CEPE 16/2024',
+      mf: 'MF = 0,7·MP + 0,3·MT',
+      mp: '(2·P₁ + 3·P₂) / 5',
+      mt: 'Média Aritmética (T₁, T₂)',
+      ps: 'PS substitui a menor nota entre P₁ e P₂',
+      obs: null
+    },
+    campos: [
+      [{id:'P1',l:'P1'},{id:'P2',l:'P2'}],
+      [{id:'PS',l:'PS',sub:1}],
+      [{id:'T1',l:'T1'},{id:'T2',l:'T2'}]
+    ],
+    compute: g => {
+      const p1 = subst(g.P1, g.PS), p2 = subst(g.P2, g.PS);
+      const mp = (2*p1 + 3*p2) / 5;
+      const mt = (N(g.T1) + N(g.T2)) / 2;
+      const mf = 0.7 * mp + 0.3 * mt;
+      return { mf, partials: [['MP', mp], ['MT', mt], ['MF', mf]] };
+    }
+  },
+  {
+    cod: 'EFB108',
+    nome: 'Matemática Computacional',
+    ch: 80,
+    criterio: {
+      resolucao: 'Avaliação Prática Contínua',
+      mf: 'MF = 0,4·T₁ + 0,6·T₂',
+      mp: null,
+      mt: 'T₁ (1º Bimestre - 40%) · T₂ (2º Bimestre - 60%)',
+      ps: null,
+      obs: '100% trabalhos práticos computacionais (sem provas teóricas)'
+    },
+    campos: [
+      [{id:'T1',l:'T1 (1º sem)'},{id:'T2',l:'T2 (2º sem)'}]
+    ],
+    compute: g => {
+      const mf = 0.4 * N(g.T1) + 0.6 * N(g.T2);
+      return { mf, partials: [['MF', mf]] };
+    }
+  },
+  {
+    cod: 'ETM302',
+    nome: 'Introdução a Projeto e Manufatura',
+    ch: 160,
+    criterio: {
+      resolucao: 'Resolução C4/2015 (kp=4, kt=6)',
+      mf: 'MF = 0,4·MP + 0,6·MT',
+      mp: '(2·P₁ + 3·P₂) / 5',
+      mt: '(T₁ + T₂ + 2·T₃ + 2·T₄ + T₅ + T₆) / 8',
+      ps: null,
+      obs: 'T₄ = Projeto Integrador · T₆ = Extensão Universitária'
+    },
+    campos: [
       [{id:'P1',l:'P1'},{id:'P2',l:'P2'}],
       [{id:'T1',l:'T1 (K1)'},{id:'T2',l:'T2 (K1)'},{id:'T3',l:'T3 (K2)'}],
-      [{id:'T4',l:'T4 (K2)'},{id:'T5',l:'T5 (K1)'},{id:'T6',l:'T6 (K1)'}]],
-    compute:g=>{const mp=(2*N(g.P1)+3*N(g.P2))/5, mt=(N(g.T1)+N(g.T2)+2*N(g.T3)+2*N(g.T4)+N(g.T5)+N(g.T6))/8, mf=0.4*mp+0.6*mt;
-      return{mf,partials:[['MP',mp],['MT',mt],['MF',mf]]};}}
+      [{id:'T4',l:'T4 (K2)'},{id:'T5',l:'T5 (K1)'},{id:'T6',l:'T6 (K1)'}]
+    ],
+    compute: g => {
+      const mp = (2 * N(g.P1) + 3 * N(g.P2)) / 5;
+      const mt = (N(g.T1) + N(g.T2) + 2*N(g.T3) + 2*N(g.T4) + N(g.T5) + N(g.T6)) / 8;
+      const mf = 0.4 * mp + 0.6 * mt;
+      return { mf, partials: [['MP', mp], ['MT', mt], ['MF', mf]] };
+    }
+  },
+  {
+    cod: 'EMC213',
+    nome: 'Materiais de Construção Mecânica I',
+    ch: 80,
+    criterio: {
+      resolucao: 'Resolução C4/2015 (kp=3, kt=2)',
+      mf: 'MF = 0,6·MP + 0,4·MT',
+      mp: '(2·P₁ + 3·P₂) / 5',
+      mt: 'Média Aritmética (T₁..T₅) · Pesos iguais',
+      ps: null,
+      obs: 'T₃ = Projeto Integrador Extensionista'
+    },
+    campos: [
+      [{id:'P1',l:'P1'},{id:'P2',l:'P2'}],
+      [{id:'T1',l:'T1'},{id:'T2',l:'T2'},{id:'T3',l:'T3'}],
+      [{id:'T4',l:'T4'},{id:'T5',l:'T5'}]
+    ],
+    compute: g => {
+      const mp = (2 * N(g.P1) + 3 * N(g.P2)) / 5;
+      const mt = (N(g.T1) + N(g.T2) + N(g.T3) + N(g.T4) + N(g.T5)) / 5;
+      const mf = 0.6 * mp + 0.4 * mt;
+      return { mf, partials: [['MP', mp], ['MT', mt], ['MF', mf]] };
+    }
+  },
+  {
+    cod: 'EFB803',
+    nome: 'Estatística',
+    ch: 80,
+    criterio: {
+      resolucao: 'Critério CEPE 16/2024',
+      mf: 'MF = 0,6·MP + 0,4·MT',
+      mp: '(2·P₁ + 3·P₂) / 5',
+      mt: '(3·T₁ + 2·T₂) / 5',
+      ps: 'PS substitui menor(P₁, P₂) · Trabalhos sem substitutiva',
+      obs: null
+    },
+    campos: [
+      [{id:'P1',l:'P1'},{id:'P2',l:'P2'}],
+      [{id:'PS',l:'PS',sub:1}],
+      [{id:'T1',l:'T1'},{id:'T2',l:'T2'}]
+    ],
+    compute: g => {
+      const p1 = subst(g.P1, g.PS), p2 = subst(g.P2, g.PS);
+      const mp = (2*p1 + 3*p2) / 5;
+      const mt = (3*N(g.T1) + 2*N(g.T2)) / 5;
+      const mf = 0.6 * mp + 0.4 * mt;
+      return { mf, partials: [['MP', mp], ['MT', mt], ['MF', mf]] };
+    }
+  }
 ];
 const TOTAL_CH2 = DISCIPLINAS.reduce((s,d)=>s+d.ch,0); // 880h
 
@@ -102,8 +227,40 @@ const TOTAL_CH2 = DISCIPLINAS.reduce((s,d)=>s+d.ch,0); // 880h
 const grid = document.getElementById('grid');
 DISCIPLINAS.forEach((d,di)=>{
   const card=document.createElement('div');card.className='card';
+  const c = d.criterio;
+  
   let h=`<div class="top"><span class="code">${d.cod}</span><span class="ch">${d.ch}h</span></div>
-    <h3>${d.nome}</h3><div class="rule">${d.rule}</div>`;
+    <h3>${d.nome}</h3>
+    
+    <div class="acad-spec">
+      <div class="acad-header">
+        <span class="acad-title">🏛️ ${c.resolucao}</span>
+        <span class="acad-mf">${c.mf}</span>
+      </div>
+      <div class="acad-body">
+        ${c.mp ? `
+          <div class="acad-row">
+            <span class="acad-pill mp">Provas</span>
+            <span class="acad-formula"><b>MP:</b> ${c.mp}</span>
+          </div>` : ''}
+        ${c.mt ? `
+          <div class="acad-row">
+            <span class="acad-pill mt">Trabalhos</span>
+            <span class="acad-formula"><b>MT:</b> ${c.mt}</span>
+          </div>` : ''}
+        ${c.ps ? `
+          <div class="acad-row">
+            <span class="acad-pill ps">Sub</span>
+            <span class="acad-formula"><b>PS:</b> ${c.ps}</span>
+          </div>` : ''}
+        ${c.obs ? `
+          <div class="acad-row">
+            <span class="acad-pill obs">Regime</span>
+            <span class="acad-formula">${c.obs}</span>
+          </div>` : ''}
+      </div>
+    </div>`;
+
   d.campos.forEach(linha=>{
     const cls=linha.length===1?'one':(linha.length===3?'three':'');
     h+=`<div class="row ${cls}">`;
@@ -198,6 +355,7 @@ document.addEventListener('input', recalc);
 document.addEventListener('change', recalc);
 
 // ================= BASE COMPLETA DE MONITORIAS (CANVAS IMT) =================
+// Ordem de prioridade oficial do portal Canvas IMT: Cálculo II, Física II, ResMat, MecGeral, MatComp, IPM, MCM, Estatística
 const MONITORIAS = [
   {
     cod: 'EFB109',
@@ -227,6 +385,16 @@ const MONITORIAS = [
     ]
   },
   {
+    cod: 'ETM101',
+    nome: 'Resistência dos Materiais',
+    ch: 160,
+    responsavel: 'Monitor Rafael (Contato docente: caio.santos@maua.br)',
+    obs: 'Atendimentos presenciais de 3 horas contínuas todas as quintas na Sala R.01 para esclarecimento de diagramas de esforço, tensões e deformações.',
+    horarios: [
+      { dia: 'qui', diaNome: 'Quinta-feira', horario: '09h00 às 12h00', tipo: 'presencial', local: 'Sala R.01 (Bloco R)' }
+    ]
+  },
+  {
     cod: 'EFB204',
     nome: 'Mecânica Geral',
     ch: 80,
@@ -242,36 +410,13 @@ const MONITORIAS = [
     ]
   },
   {
-    cod: 'ETM101',
-    nome: 'Resistência dos Materiais',
-    ch: 160,
-    responsavel: 'Monitor Rafael (Contato docente: caio.santos@maua.br)',
-    obs: 'Atendimentos presenciais de 3 horas contínuas todas as quintas na Sala R.01 para esclarecimento de diagramas de esforço, tensões e deformações.',
-    horarios: [
-      { dia: 'qui', diaNome: 'Quinta-feira', horario: '09h00 às 12h00', tipo: 'presencial', local: 'Sala R.01 (Bloco R)' }
-    ]
-  },
-  {
-    cod: 'EFB803',
-    nome: 'Estatística',
+    cod: 'EFB108',
+    nome: 'Matemática Computacional',
     ch: 80,
-    responsavel: 'Monitor Pedro Wilian Palumbo Bevilacqua',
-    teamsLink: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G',
-    obs: 'Atendimento presencial na Sala J309 e sessão remota às sextas-feiras à noite pelo Microsoft Teams.',
+    responsavel: 'Profª Drª Lilian Victorino',
+    obs: 'Plantão docente de esclarecimento e orientação para os trabalhos computacionais (T1 e T2) e métodos numéricos.',
     horarios: [
-      { dia: 'qua', diaNome: 'Quarta-feira', horario: '14h00 às 15h00', tipo: 'presencial', local: 'Sala J309 (Bloco J)' },
-      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G' }
-    ]
-  },
-  {
-    cod: 'EMC213',
-    nome: 'Materiais de Construção Mecânica I',
-    ch: 80,
-    responsavel: 'Monitoria de Materiais Metálicos e Ensaios',
-    obs: 'Apoio aos estudos de diagramas de fase, tratamentos térmicos, ensaios mecânicos e ao projeto integrador extensionista (T3) na Sala U19.',
-    horarios: [
-      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h30 às 14h30', tipo: 'presencial', local: 'Sala U19 (Bloco U)' },
-      { dia: 'qua', diaNome: 'Quarta-feira', horario: '18h30 às 19h30', tipo: 'presencial', local: 'Sala U19 (Bloco U)' }
+      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'presencial', local: 'Bloco G02 · Sala 12 / Online' }
     ]
   },
   {
@@ -289,13 +434,26 @@ const MONITORIAS = [
     ]
   },
   {
-    cod: 'EFB108',
-    nome: 'Matemática Computacional',
+    cod: 'EMC213',
+    nome: 'Materiais de Construção Mecânica I',
     ch: 80,
-    responsavel: 'Profª Drª Lilian Victorino',
-    obs: 'Plantão docente de esclarecimento e orientação para os trabalhos computacionais (T1 e T2) e métodos numéricos.',
+    responsavel: 'Monitoria de Materiais Metálicos e Ensaios',
+    obs: 'Apoio aos estudos de diagramas de fase, tratamentos térmicos, ensaios mecânicos e ao projeto integrador extensionista (T3) na Sala U19.',
     horarios: [
-      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'presencial', local: 'Bloco G02 · Sala 12 / Online' }
+      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h30 às 14h30', tipo: 'presencial', local: 'Sala U19 (Bloco U)' },
+      { dia: 'qua', diaNome: 'Quarta-feira', horario: '18h30 às 19h30', tipo: 'presencial', local: 'Sala U19 (Bloco U)' }
+    ]
+  },
+  {
+    cod: 'EFB803',
+    nome: 'Estatística',
+    ch: 80,
+    responsavel: 'Monitor Pedro Wilian Palumbo Bevilacqua',
+    teamsLink: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G',
+    obs: 'Atendimento presencial na Sala J309 e sessão remota às sextas-feiras à noite pelo Microsoft Teams.',
+    horarios: [
+      { dia: 'qua', diaNome: 'Quarta-feira', horario: '14h00 às 15h00', tipo: 'presencial', local: 'Sala J309 (Bloco J)' },
+      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G' }
     ]
   }
 ];
@@ -312,13 +470,90 @@ let monFiltroDia = 'todos';
 let monViewMode = 'timeline'; // 'timeline' ou 'cards'
 let monSearchQuery = '';
 
+// ================= MOTOR DE BUSCA INTELIGENTE (SEM ACENTO E COM SIGLAS) =================
+// Remove acentuação, caracteres especiais e normaliza espaços
+function normalizeSearchText(str) {
+  if (!str) return '';
+  return String(str)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Dicionário acadêmico de siglas, abreviações e termos populares da Mauá
+const SEARCH_ALIASES = {
+  'EFB109': [
+    'calc', 'cal', 'calculo', 'calculo 2', 'calculo ii', 'cdi', 'cdi2', 'cdi 2',
+    'integral', 'derivada', 'limites', 'series', 'enzo', 'teams', 'online', 'u23', 'u29'
+  ],
+  'EFB206': [
+    'fis', 'fisica', 'fisica 2', 'fisica ii', 'laboratorio', 'lab', 'eletromagnetismo',
+    'optica', 'h331', 'sidney', 'breno', 'guilherme', 'presencial'
+  ],
+  'ETM101': [
+    'resmat', 'res mat', 'res', 'resmat1', 'resistencia', 'resistencia dos materiais',
+    'tensao', 'deformacao', 'torcao', 'flexao', 'r01', 'r 01', 'caio', 'santos', 'rafael', 'presencial'
+  ],
+  'EFB204': [
+    'mec', 'mecanica', 'mecanica geral', 'mec geral', 'estatica', 'cinematica',
+    'dinamica', 'h336', 'teams', 'online', 'hibrido'
+  ],
+  'EFB108': [
+    'matcomp', 'mat comp', 'comp', 'matematica computacional', 'metodos numericos',
+    'programacao', 'python', 'lilian', 'victorino', 'g02', 'bloco g', 'trabalhos'
+  ],
+  'ETM302': [
+    'ipm', 'projeto e manufatura', 'manufatura', 'projeto', 'cad', 'solidworks',
+    'redutor', 'usinagem', 'torno', 'c4', 'c5', 'q6', 'maria luiza', 'rito'
+  ],
+  'EMC213': [
+    'mcm', 'mcm1', 'mcm 1', 'materiais', 'materiais de construcao mecanica',
+    'metalicos', 'ensaios', 'tracao', 'dureza', 'diagrama de fases', 'u19', 'extensao'
+  ],
+  'EFB803': [
+    'est', 'estat', 'estatistica', 'probabilidade', 'prob', 'distribuicao',
+    'pedro', 'bevilacqua', 'j309', 'bloco j', 'teams', 'online', 'noturno'
+  ]
+};
+
+// Validador inteligente de busca: suporta múltiplos termos, sem acento e siglas
+function matchesSearch(m, slot = null) {
+  const qNorm = normalizeSearchText(monSearchQuery);
+  if (!qNorm) return true;
+
+  const tokens = qNorm.split(' ').filter(Boolean);
+  if (tokens.length === 0) return true;
+
+  const aliases = SEARCH_ALIASES[m.cod] || [];
+  const parts = [
+    m.cod,
+    m.nome,
+    m.responsavel,
+    m.obs,
+    ...aliases
+  ];
+
+  if (slot) {
+    parts.push(slot.diaNome, slot.horario, slot.local, slot.tipo);
+  } else {
+    m.horarios.forEach(h => {
+      parts.push(h.diaNome, h.horario, h.local, h.tipo);
+    });
+  }
+
+  const corpus = normalizeSearchText(parts.join(' '));
+
+  return tokens.every(token => corpus.includes(token));
+}
+
 // ================= RENDERIZADOR DE MONITORIAS =================
 function renderMonitorias() {
   const container = document.getElementById('monContainer');
   if (!container) return;
   container.innerHTML = '';
-
-  const q = monSearchQuery.trim().toLowerCase();
 
   if (monViewMode === 'timeline') {
     // ---- VISÃO AGENDA SEMANAL ----
@@ -333,19 +568,11 @@ function renderMonitorias() {
     let totalSlotsEncontrados = 0;
 
     diasParaExibir.forEach(d => {
-      // busca todos os slots deste dia
       const slotsDoDia = [];
       MONITORIAS.forEach(m => {
         m.horarios.forEach(h => {
           if (h.dia === d.id) {
-            const matchesQuery = !q || 
-              m.nome.toLowerCase().includes(q) || 
-              m.cod.toLowerCase().includes(q) || 
-              m.responsavel.toLowerCase().includes(q) || 
-              h.local.toLowerCase().includes(q) ||
-              h.tipo.toLowerCase().includes(q);
-
-            if (matchesQuery) {
+            if (matchesSearch(m, h)) {
               slotsDoDia.push({ ...h, materia: m.nome, cod: m.cod, resp: m.responsavel });
             }
           }
@@ -394,14 +621,7 @@ function renderMonitorias() {
     MONITORIAS.forEach(m => {
       m.horarios.forEach(h => {
         if (!DIAS_SEMANA.some(d => d.id === h.dia)) {
-          const matchesQuery = !q || 
-            m.nome.toLowerCase().includes(q) || 
-            m.cod.toLowerCase().includes(q) || 
-            m.responsavel.toLowerCase().includes(q) || 
-            h.local.toLowerCase().includes(q) ||
-            h.tipo.toLowerCase().includes(q);
-
-          if (matchesQuery) {
+          if (matchesSearch(m, h)) {
             specialSlots.push({ ...h, materia: m.nome, cod: m.cod, resp: m.responsavel });
           }
         }
@@ -445,6 +665,7 @@ function renderMonitorias() {
     if (totalSlotsEncontrados === 0) {
       container.innerHTML = `<div class="note" style="text-align:center;padding:32px">
         Nenhum plantão encontrado para a busca "<b>${monSearchQuery}</b>".
+        <div style="margin-top:8px;font-size:.8rem;color:var(--dim)">Dica: você pode buscar por siglas como <b>CALC</b>, <b>FIS</b>, <b>RESMAT</b>, <b>MEC</b>, <b>MATCOMP</b>, <b>IPM</b>, <b>MCM</b>, <b>EST</b>, salas ou monitores.</div>
       </div>`;
     } else {
       container.appendChild(wrap);
@@ -457,19 +678,16 @@ function renderMonitorias() {
 
     let count = 0;
     MONITORIAS.forEach(m => {
-      // filtra slots
       const slots = m.horarios.filter(h => {
         const matchesDay = (monFiltroDia === 'todos' || h.dia === monFiltroDia);
-        const matchesQuery = !q || 
-          m.nome.toLowerCase().includes(q) || 
-          m.cod.toLowerCase().includes(q) || 
-          m.responsavel.toLowerCase().includes(q) || 
-          h.local.toLowerCase().includes(q) ||
-          h.horario.toLowerCase().includes(q);
-        return matchesDay && matchesQuery;
+        const matchesQ = matchesSearch(m, h);
+        return matchesDay && matchesQ;
       });
 
-      if (slots.length === 0 && (q || monFiltroDia !== 'todos')) return;
+      const matchesCard = matchesSearch(m);
+      if (slots.length === 0 && (monSearchQuery.trim() || monFiltroDia !== 'todos')) {
+        if (!matchesCard || monFiltroDia !== 'todos') return;
+      }
       count++;
 
       const card = document.createElement('div');
@@ -521,6 +739,7 @@ function renderMonitorias() {
     if (count === 0) {
       container.innerHTML = `<div class="note" style="text-align:center;padding:32px">
         Nenhuma matéria encontrada para a busca "<b>${monSearchQuery}</b>".
+        <div style="margin-top:8px;font-size:.8rem;color:var(--dim)">Dica: você pode buscar por siglas como <b>CALC</b>, <b>FIS</b>, <b>RESMAT</b>, <b>MEC</b>, <b>MATCOMP</b>, <b>IPM</b>, <b>MCM</b>, <b>EST</b>.</div>
       </div>`;
     } else {
       container.appendChild(grid);
@@ -594,12 +813,21 @@ if (btnTimeline && btnCards) {
   });
 }
 
-// Busca instantânea
+// Busca instantânea com suporte a ESC e botão limpar do navegador
 const searchInput = document.getElementById('monSearch');
 if (searchInput) {
-  searchInput.addEventListener('input', e => {
+  const onSearchChange = e => {
     monSearchQuery = e.target.value;
     renderMonitorias();
+  };
+  searchInput.addEventListener('input', onSearchChange);
+  searchInput.addEventListener('search', onSearchChange);
+  searchInput.addEventListener('keyup', e => {
+    if (e.key === 'Escape') {
+      searchInput.value = '';
+      monSearchQuery = '';
+      renderMonitorias();
+    }
   });
 }
 
@@ -762,11 +990,25 @@ if (btnSync) {
 function limpar2(){document.querySelectorAll('input[data-d]').forEach(i=>i.value='');recalc();showToast('Notas do 2º ano limpas.');}
 function limpar1(){document.querySelectorAll('[data-y1]').forEach(i=>i.value='');recalc();showToast('Notas do 1º ano limpas.');}
 function exemplo(){
-  const demo={'0':{T1:8,T2:7},'1':{P1:6,P2:7,P3:8,P4:5,T1:9,T2:8,T3:7,T4:10},
-    '2':{P1:6,P2:7,T1:8,T2:9},'4':{P1:7,P2:6,T1:8,T2:7}};
+  const demoByCod = {
+    'EFB109': { P1: 6.5, P2: 7.0, P3: 7.5, P4: 6.0, T1: 8.5, T2: 9.0, T3: 8.0, T4: 7.5 },
+    'EFB206': { Pi1: 6.0, Pi2: 7.0, Te1: 8.0, Te2: 8.5, MAt1: 7.5, Proj1: 8.0, MAt2: 8.0, Proj2: 8.5 },
+    'ETM101': { P1: 6.0, P2: 7.0, P3: 7.5, P4: 6.5, T1: 8.0, T2: 8.0, T3: 7.5, T4: 8.5, T5: 9.0 },
+    'EFB204': { P1: 6.0, P2: 7.5, T1: 8.0, T2: 8.5 },
+    'EFB108': { T1: 8.5, T2: 9.0 },
+    'ETM302': { P1: 7.0, P2: 7.5, T1: 8.0, T2: 8.0, T3: 8.5, T4: 8.5, T5: 9.0, T6: 9.0 },
+    'EMC213': { P1: 6.5, P2: 7.0, T1: 8.0, T2: 8.5, T3: 9.0, T4: 8.0, T5: 8.5 },
+    'EFB803': { P1: 7.0, P2: 6.5, T1: 8.0, T2: 7.5 }
+  };
   limpar2();
-  Object.entries(demo).forEach(([di,v])=>Object.entries(v).forEach(([f,x])=>{
-    const el=document.querySelector(`input[data-d="${di}"][data-f="${f}"]`);if(el)el.value=x;}));
+  DISCIPLINAS.forEach((d, di) => {
+    if (demoByCod[d.cod]) {
+      Object.entries(demoByCod[d.cod]).forEach(([f, val]) => {
+        const el = document.querySelector(`input[data-d="${di}"][data-f="${f}"]`);
+        if (el) el.value = val;
+      });
+    }
+  });
   recalc();
   showToast('Exemplo de notas carregado!');
 }

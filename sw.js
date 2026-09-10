@@ -1,4 +1,4 @@
-const CACHE = 'notas-cr-v4-teams-direct';
+const CACHE = 'notas-cr-v5-smart-search-academic';
 const ASSETS = [
   './',
   'index.html',
