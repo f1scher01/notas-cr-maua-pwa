@@ -10,7 +10,7 @@
 
 <br/>
 
-**Aplicativo Web Progressivo (PWA) de alto nível para cálculo rigoroso de notas, simulação de Coeficiente de Rendimento (CR) e acesso centralizado aos plantões de monitoria presenciais e online do Instituto Mauá de Tecnologia.**
+**Aplicativo web progressivo (PWA) que calcula médias finais pelas regras de cada plano de ensino, projeta o coeficiente de rendimento (CR) e reúne os horários de monitoria do 2º ano de Engenharia Mecânica do Instituto Mauá de Tecnologia.**
 
 👉 **Acesse em produção:** [**notas-cr-maua.vercel.app**](https://notas-cr-maua.vercel.app)
 
@@ -26,7 +26,7 @@
 - **Interface Dark Glassmorphism:** Desenvolvida em Vanilla CSS responsivo com barra de navegação inferior (*Mobile Dock*) para uso ergonômico no smartphone com uma só mão.
 
 ### 🧮 Modelagem Matemática e Critérios Oficiais do IMT
-- **Conformidade CEPE 16/2024:** Aplicação fiel das resoluções pedagógicas do Instituto Mauá de Tecnologia (critério C4/2015).
+- **Critérios oficiais:** cada disciplina segue o critério indicado no próprio app (CEPE 16/2024 ou C4/2015, conforme o plano de ensino).
 - **Cálculo de Provas e Trabalhos:**
   - $MP$ (Média de Provas) e $MT$ (Média de Trabalhos) com ponderações específicas por matéria.
   - Coeficientes de ponderação individuais ($K_i$) em disciplinas com relatórios de laboratório, peças de oficina e projetos extensionistas (ex: **EMC213** e **ETM302**).
@@ -44,7 +44,7 @@
 - **Atalho Integrado:** Cada matéria na calculadora de notas possui um atalho direto (`📅 Ver plantão de monitoria →`) que rola a tela e destaca o card correspondente com efeito luminoso.
 - **Compartilhamento com 1 Clique:** Botões para copiar horários formatados para envio rápido no WhatsApp da turma.
 
-### 🔍 Motor de Busca Inteligente
+### 🔍 Busca
 - **Normalização Unicode:** Busca insensível a acentuação e pontuação (ex: `calculo` encontra `Cálculo`, `fisica` encontra `Física`).
 - **Dicionário Acadêmico de Siglas do Campus:**
   - `CALC` / `cdi` $\rightarrow$ Cálculo Diferencial e Integral II
@@ -57,7 +57,7 @@
   - `EST` / `probabilidade` $\rightarrow$ Estatística
   - Busca por monitores (*Enzo, Sidney, Breno, Guilherme, Rafael, Maria Luiza, Pedro*) e salas.
 
-### 🔒 Privacidade Absoluta
+### 🔒 Privacidade
 - **Zero Tracking:** 100% processado no navegador do usuário (*client-side*).
 - Nenhum dado pessoal, nota ou métrica é enviado para servidores externos ou bancos de dados.
 
