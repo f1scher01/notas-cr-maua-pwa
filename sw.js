@@ -1,4 +1,4 @@
-const CACHE = 'notas-cr-v6-live-sp-teams';
+const CACHE = 'notas-cr-v7';
 const ASSETS = [
   './',
   'index.html',

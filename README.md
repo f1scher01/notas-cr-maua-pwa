@@ -39,8 +39,8 @@
 - **Horário Oficial de Brasília / São Paulo (UTC-3):** O sistema detecta com precisão o dia da semana e horário real via `Intl.DateTimeFormat`, destacando os atendimentos do dia com a badge `● HOJE` e atualizando o relógio a cada 30 segundos.
 - **Dual View (Agenda Semanal vs. Por Disciplina):**
   - **Agenda Semanal:** Visão cronológica de Segunda a Sexta com salas (`U23`, `H331`, `R.01`, `H336`, `C4`, `Q6`, `U19`, `J309`, etc.) e modalidades.
-  - **Por Disciplina:** Cards acadêmicos com informações pedagógicas, monitores responsáveis e contatos.
-- **Links Diretos do Microsoft Teams:** Acesso imediato em um clique às sessões remotas e canais das matérias (incluindo reunião online de **Matemática Computacional** e plantões de **Mecânica Geral** e **Estatística**).
+  - **Por Disciplina:** Cards com informações pedagógicas, monitores e salas.
+- **Sessões online:** indica os plantões remotos pelo Microsoft Teams. Os links de reunião não ficam no site público, porque qualquer pessoa com o link consegue entrar; o aluno encontra o link no canal da disciplina.
 - **Atalho Integrado:** Cada matéria na calculadora de notas possui um atalho direto (`📅 Ver plantão de monitoria →`) que rola a tela e destaca o card correspondente com efeito luminoso.
 - **Compartilhamento com 1 Clique:** Botões para copiar horários formatados para envio rápido no WhatsApp da turma.
 
@@ -55,7 +55,7 @@
   - `IPM` / `cad` / `redutor` $\rightarrow$ Introdução a Projeto e Manufatura
   - `MCM` / `diagrama de fases` $\rightarrow$ Materiais de Construção Mecânica I
   - `EST` / `probabilidade` $\rightarrow$ Estatística
-  - Busca por monitores (*Enzo, Sidney, Breno, Guilherme, Rafael, Maria Luiza, Pedro*) e salas.
+  - Busca por monitor e por sala.
 
 ### 🔒 Privacidade
 - **Zero Tracking:** 100% processado no navegador do usuário (*client-side*).

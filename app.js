@@ -373,7 +373,7 @@ const MONITORIAS = [
     cod: 'EFB206',
     nome: 'Física II',
     ch: 160,
-    responsavel: 'Monitores Sidney Rafael, Breno Rocha e Guilherme Ienna',
+    responsavel: 'Monitores Sidney, Breno e Guilherme',
     obs: 'Plantão centralizado sempre na Sala H331 (Bloco H). Abrange dúvidas de teoria, listas de exercícios e preparação para as práticas de laboratório.',
     horarios: [
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '09h30 às 13h00', tipo: 'presencial', local: 'Sala H331 (Sidney)' },
@@ -387,7 +387,7 @@ const MONITORIAS = [
     cod: 'ETM101',
     nome: 'Resistência dos Materiais',
     ch: 160,
-    responsavel: 'Monitor Rafael (Contato docente: caio.santos@maua.br)',
+    responsavel: 'Monitor Rafael',
     obs: 'Atendimentos presenciais de 3 horas contínuas todas as quintas na Sala R.01 para esclarecimento de diagramas de esforço, tensões e deformações.',
     horarios: [
       { dia: 'qui', diaNome: 'Quinta-feira', horario: '09h00 às 12h00', tipo: 'presencial', local: 'Sala R.01 (Bloco R)' }
@@ -398,11 +398,10 @@ const MONITORIAS = [
     nome: 'Mecânica Geral',
     ch: 80,
     responsavel: 'Equipe de Monitores de Mecânica Geral',
-    teamsLink: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_YTU0Y2M0YjQtZWI4Yy00MzNiLTg1ZDAtNDZhNGZlNTAzMDMx%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%2226d04049-6185-49e3-a0ac-68b725485b42%22%7d',
-    obs: 'Atendimento híbrido: sessões online no início da semana via Microsoft Teams e plantões presenciais na Sala H336 nas quartas e sextas.',
+    obs: 'Atendimento híbrido: sessões online no início da semana via Microsoft Teams (link no canal da disciplina) e plantões presenciais na Sala H336 nas quartas e sextas.',
     horarios: [
-      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_YTU0Y2M0YjQtZWI4Yy00MzNiLTg1ZDAtNDZhNGZlNTAzMDMx%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%2226d04049-6185-49e3-a0ac-68b725485b42%22%7d' },
-      { dia: 'ter', diaNome: 'Terça-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_NzcyODQyMDctY2FlNi00M2IzLTgzZTctOWI5MmQ1ZjMwZTJh%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%2226d04049-6185-49e3-a0ac-68b725485b42%22%7d' },
+      { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)' },
+      { dia: 'ter', diaNome: 'Terça-feira', horario: '11h20 às 13h00', tipo: 'online', local: 'Online (Teams)' },
       { dia: 'qua', diaNome: 'Quarta-feira', horario: '16h40 às 18h30', tipo: 'presencial', local: 'Sala H336' },
       { dia: 'sex', diaNome: 'Sexta-feira', horario: '09h30 às 11h10', tipo: 'presencial', local: 'Sala H336' },
       { dia: 'sex', diaNome: 'Sexta-feira', horario: '11h20 às 13h00', tipo: 'presencial', local: 'Sala H336' }
@@ -413,17 +412,16 @@ const MONITORIAS = [
     nome: 'Matemática Computacional',
     ch: 80,
     responsavel: 'Profª Drª Lilian Victorino',
-    teamsLink: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_MmM2OGVhODgtNjU1Ni00NjJjLWJjMGQtYWUyMWQ0MzVjMjM1%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%22d62fc926-6011-40bb-a9c1-83b1c000b27d%22%7d',
-    obs: 'Plantão docente de esclarecimento e orientação para os trabalhos computacionais (T1 e T2) e métodos numéricos. Atendimento híbrido presencial no Bloco G02 e online via Microsoft Teams.',
+    obs: 'Plantão docente de esclarecimento e orientação para os trabalhos computacionais (T1 e T2) e métodos numéricos. Atendimento híbrido presencial no Bloco G02 e online via Microsoft Teams (link no canal da disciplina).',
     horarios: [
-      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'online', local: 'Bloco G02 · Sala 12 / Teams', link: 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_MmM2OGVhODgtNjU1Ni00NjJjLWJjMGQtYWUyMWQ0MzVjMjM1%40thread.v2/0?context=%7b%22Tid%22%3a%22c49e1939-4b53-4738-bb64-41fb2990e41c%22%2c%22Oid%22%3a%22d62fc926-6011-40bb-a9c1-83b1c000b27d%22%7d' }
+      { dia: 'qui', diaNome: 'Quinta-feira', horario: '10h30 às 11h30', tipo: 'online', local: 'Bloco G02 · Sala 12 / Teams' }
     ]
   },
   {
     cod: 'ETM302',
     nome: 'Introdução a Projeto e Manufatura',
     ch: 160,
-    responsavel: 'Monitora Maria Luiza Rito (24.00103-0@maua.br)',
+    responsavel: 'Monitora Maria Luiza',
     obs: 'Ampla disponibilidade semanal distribuída entre as salas C4, C5 e Q6 para acompanhamento de modelagem CAD, usinagem e projeto de redutor.',
     horarios: [
       { dia: 'seg', diaNome: 'Segunda-feira', horario: '11h20 às 14h20', tipo: 'presencial', local: 'Sala C4' },
@@ -448,12 +446,11 @@ const MONITORIAS = [
     cod: 'EFB803',
     nome: 'Estatística',
     ch: 80,
-    responsavel: 'Monitor Pedro Wilian Palumbo Bevilacqua',
-    teamsLink: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G',
-    obs: 'Atendimento presencial na Sala J309 e sessão remota às sextas-feiras à noite pelo Microsoft Teams.',
+    responsavel: 'Monitor Pedro',
+    obs: 'Atendimento presencial na Sala J309 e sessão remota às sextas-feiras à noite pelo Microsoft Teams (link no canal da disciplina).',
     horarios: [
       { dia: 'qua', diaNome: 'Quarta-feira', horario: '14h00 às 15h00', tipo: 'presencial', local: 'Sala J309 (Bloco J)' },
-      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Online (Teams)', link: 'https://teams.microsoft.com/meet/27939028084151?p=Bj4eZBwgOE9cBvm42G' }
+      { dia: 'sex', diaNome: 'Sexta-feira', horario: '18h00 às 19h00', tipo: 'online', local: 'Online (Teams)' }
     ]
   }
 ];
