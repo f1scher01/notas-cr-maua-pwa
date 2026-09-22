@@ -1,7 +1,7 @@
 <div align="center">
 
 # 🎓 Central do Aluno Mauá · Notas, CR & Monitorias
-### Engenharia Mecânica — Instituto Mauá de Tecnologia (IMT)
+### Engenharia Mecânica · Instituto Mauá de Tecnologia (IMT)
 
 [![Deploy com Vercel](https://img.shields.io/badge/Vercel-Produção%20Ativa-black?style=for-the-badge&logo=vercel)](https://notas-cr-maua.vercel.app)
 [![PWA Ready](https://img.shields.io/badge/PWA-100%25%20Offline-blue?style=for-the-badge&logo=pwa)](https://notas-cr-maua.vercel.app)
@@ -120,5 +120,5 @@ Como o projeto é construído em Vanilla JS sem dependências pesadas ou etapa d
 ## 👤 Autor
 
 Desenvolvido por **Lucas Fischer Paez**  
-Aluno de Engenharia Mecânica — *Instituto Mauá de Tecnologia (IMT)*  
+Aluno de Engenharia Mecânica, *Instituto Mauá de Tecnologia (IMT)*  
 GitHub: [@f1scher01](https://github.com/f1scher01)
